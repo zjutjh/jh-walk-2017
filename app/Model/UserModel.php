@@ -96,6 +96,7 @@ class UserModel extends Model{
     public static function get_canshow_user_info($pid){//获得一个用户可以直接修改和显示的数据 name sex area startarea phone qq
         $user=UserModel::where('uid',$pid)->get();
         $user=$user[0];
+        //todo 重写
         if($user!=NULL){
             $userarray['name']=$user->name;
             $userarray['sex']=$user->sex;
@@ -145,7 +146,7 @@ class UserModel extends Model{
         $user_info[0]->section=MainModel::Get_num_yx();
         $user_info[0]->save();
     }
-    public static function dismiss_allGroupMember($gid){
+    public static function dismiss_allGroupMember($gid){//解散所有组员
         UserModel::where('gid',$gid)->update(['apply'=>0,'gleader'=>'','gid'=>-1]);
         return 1;
     }

@@ -13,7 +13,7 @@ use App\Model\UserModel;
 use App\Model\GroupModel;
 use App\Model\MainModel;
 use Illuminate\Pagination\PaginationServiceProvider;
-
+//todo 所有return不应该存在views，全部改为json
 function trimall($str)//删除空格
 {
     $qian=array(" ","　","\t","\n","\r");
@@ -92,6 +92,11 @@ class MyyxController extends Controller{
 //        return view("myyx.group_ungrouped");
 
     }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     */
     public function login(Request $request){
 
         $username=trimall($request->input('username'));

@@ -9,7 +9,7 @@ namespace App\Model;
 use Cache;
 use Carbon\Carbon;
 class User{
-    public static function login($username,$password){
+    public static function login($username,$password){//通过精弘api登录
 
         if(!isset($_SESSION['login_pid'])){
             $url_ex="http://api.jh.zjut.edu.cn/jhapi.php?url=";
@@ -29,7 +29,8 @@ class User{
         return 1;
 
     }
-    public static function qq_login_token($code){
+    public static function qq_login_token($code){//通过qq登录
+        //todo 需要重构 想通过微信登录
         $qqcon=self::get_qq_config();
         $url="https://graph.qq.com/oauth2.0/token?client_id={$qqcon['appid']}&client_secret={$qqcon['appkey']}&redirect_uri={$qqcon['redirect_uri']}&grant_type=authorization_code&code={$code}";
         $msg=file_get_contents($url);
