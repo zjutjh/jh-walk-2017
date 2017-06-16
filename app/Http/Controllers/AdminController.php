@@ -15,10 +15,10 @@ use Excel;
 
 class AdminController extends Controller{
         public function adminIndex(Request $request){
-                if(!isset($_SESSION['login_pid'])){
+                if($request->session()->has('login_pid')){
                         return view("errors.no_admin_err",['err_msg'=>'登录过期']);
                 }
-                $pid=$_SESSION['login_pid'];
+                $pid=$request->session()->get('login_pid');
                 if(!UserModel::get_admin_byPid($pid)){
                         return view("errors.no_admin_err",['err_msg'=>'您没有权限']);
                 }
@@ -28,11 +28,11 @@ class AdminController extends Controller{
                 return view("admin.index_admin",['nGroup'=>$now_group,'nJoin'=>$now_join]);
 
         }
-        public function output_excel(){
-                if(!isset($_SESSION['login_pid'])){
+        public function output_excel(Request $request){
+                if($request->session()->has('login_pid')){
                         return view("errors.no_admin_err",['err_msg'=>'登录过期']);
                 }
-                $pid=$_SESSION['login_pid'];
+                $pid=$request->session()->get('login_pid');
                 if(!UserModel::get_admin_byPid($pid)){
                         return view("errors.no_admin_err",['err_msg'=>'您没有权限']);
                 }

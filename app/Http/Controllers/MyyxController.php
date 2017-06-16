@@ -23,14 +23,14 @@ function trimall($str)//删除空格
 
 class MyyxController extends Controller{
 
-    public function get(){//显示
+    public function get(Request $request){//显示
 
 
-        if(!isset($_SESSION['login_pid'])){
+        if($request->session()->has('login_pid')){
             return view("myyx.login");
         }
-        $pid=$_SESSION['login_pid'];
-        $type=$_SESSION['login_type'];
+        $pid=$request->session()->get('login_pid');
+        $type=$request->session()->get('login_type');
         //var_dump($type);
        // var_dump($pid);
        // var_dump($_SESSION['login_pid']);
@@ -103,7 +103,10 @@ class MyyxController extends Controller{
         $password=$request->input('password');
 
         if(User::login($username,$password)==1){
-            return $this->apiResponse(200,"登录成功");
+            $data=UserModel::get_user_info_byPid($username);
+            $request->session()->put('login_pid',$username);
+            $request->session()->put('login_type',0);
+            return $this->apiResponse(200,"登录成功",['accountName'=>$data->name]);
         }else{
             return $this->apiResponse(400,"用户名或密码错误");
         }
@@ -114,33 +117,36 @@ class MyyxController extends Controller{
         $state=$request->input('state');
         $acc_token=User::qq_login_token($code);
         $openid=User::qq_login_openid($acc_token);
-        if(User::qq_login($openid)==1){
-            return view('layouts.qq_do');
-        }else{
-            return $this->apiResponse(400,"登录失败");
-        }
+        $request->session()->put('login_pid',$openid);
+        $request->session()->put('login_type',1);
+        return view('layouts.qq_do');
+
 
 
     }
-    public function logout(){
-        if(User::logout()==1){
+    public function logout(Request $request){
+        $request->session()->remove('login_pid');
+        $request->session()->remove('login_type');
             return $this->apiResponse(200,"登出成功");
-        }
-    }
-    public function account(){//修改用户信息
-        //检测报名是否结束
-        $ws=MainModel::Get_webstate();
 
-        if($ws==0){
-            return $this->apiResponse(401,"报名已经结束!");
-        }
+    }
+    public function account(Request $request){//是否登录
+        //检测报名是否结束
+//        $ws=MainModel::Get_webstate();
+//
+//        if($ws==0){
+//            return $this->apiResponse(401,"报名已经结束!");
+//        }
         //检测完毕
         $pid=User::check_outdate();
         if($pid==-1){
-            return $this->apiResponse(403,"登录过期，请刷新页面");
+            return $this->apiResponse(401,"登录过期",['errorSession'=>$request->session()->all()]);
+        }else{
+            $data=UserModel::get_user_info_byPid($pid);
+            return $this->apiResponse(200,"用户已登录",['accountName'=>$data->name]);
         }
-        $userarray= UserModel::get_canshow_user_info($pid);
-        return view("myyx.account",['userarray'=>$userarray]);
+//        $userarray= UserModel::get_canshow_user_info($pid);
+//        return view("myyx.account",['userarray'=>$userarray]);
     }
     public function updaccount(Request $request){//更新用户信息
         //检测报名是否结束

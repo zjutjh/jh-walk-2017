@@ -50,6 +50,10 @@ class UserModel extends Model{
         }
         return true;
     }
+    public static function get_user_info_byPid($pid){
+        $user=UserModel::where('uid',$pid)->first();
+        return $user;
+    }
     public static function get_joined_count(){
         $section=MainModel::Get_num_yx();
         $result=UserModel::whereRaw('section=? and gid>0 and apply=1',[$section])->count();
