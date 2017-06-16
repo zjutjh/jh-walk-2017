@@ -10,7 +10,8 @@ var elixir = require('laravel-elixir');
  | file for our application, as well as publishing vendor resources.
  |
  */
+require('laravel-elixir-vue');
 
-elixir(function(mix) {
-    mix.sass('app.scss');
+elixir((mix) => {
+    mix.webpack('main.js');
 });
